@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style1.css">
+    <script src="https://kit.fontawesome.com/adad4d30c2.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="music-player">
+            <nav>
+                <div class="circle">
+                    <i class="fa-solid fa-angle-left" onclick="playPrevious()"></i>
+                </div>
+
+                <div class="circle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </nav>
+            <img src="media/enna sona img.jpg" class="song-img">
+
+            <h1 id="songTitle">Enna sona</h1>
+            <p id="songArtist">A.R Rehaman</p>
+
+            <audio id="song">
+                <source src="media/Enna Sona.mp3" type="audio/mpeg">
+            </audio>
+            <input type="range" value="0" id="progress">
+
+            <div class="controls">
+                <div onclick="playPrevious()"><i class="fa-solid fa-backward"></i></div>
+
+                <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
+
+                <div onclick="playNext()"><i class="fa-solid fa-forward"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let progress = document.getElementById("progress");
+        let song = document.getElementById("song");
+        let ctrlIcon = document.getElementById("ctrlIcon");
+        let songTitle = document.getElementById("songTitle");
+        let songArtist = document.getElementById("songArtist");
+        let songImg = document.querySelector(".song-img");
+
+        let playlist = [
+            { title: "Enna sonna", artist: "A.R Rehaman", file: "media/Enna sona.mp3", image: "media/enna sona img.jpg" },
+            { title: "ninnu kori", artist: "Nani", file: "media/Ninnu kori.mp3", image: "media/ninnu kori img.jpg" },
+            { title: "chilaka", artist: "deepthi", file: "media/Chilaka.mp3", image: "media/chilaka song img.jpg" },
+            // Add more songs as needed
+        ];
+
+        let currentSongIndex = 0;
+
+        function loadSong(index) {
+            songTitle.textContent = playlist[index].title;
+            songArtist.textContent = playlist[index].artist;
+            songImg.src = playlist[index].image;
+            song.src = playlist[index].file;
+            song.load();
+        }
+
+        function playPause() {
+            if (song.paused) {
+                song.play();
+                ctrlIcon.classList.add("fa-pause");
+                ctrlIcon.classList.remove("fa-play");
+            } else {
+                song.pause();
+                ctrlIcon.classList.remove("fa-pause");
+                ctrlIcon.classList.add("fa-play");
+            }
+        }
+
+        function playNext() {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
+            loadSong(currentSongIndex);
+            song.play(); // Play the song automatically when clicking "Next"
+        }
+
+        function playPrevious() {
+            currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+            loadSong(currentSongIndex);
+            if (!song.paused) {
+                song.play();
+            }
+        }
+
+        song.onloadedmetadata = function () {
+            progress.max = song.duration;
+            progress.value = song.currentTime;
+        };
+
+        song.addEventListener('timeupdate', function () {
+            progress.value = song.currentTime;
+        });
+
+        progress.oninput = function () {
+            song.currentTime = progress.value;
+        };
+
+        loadSong(currentSongIndex);  // Load the first song initially
+    </script>
+</body>
+
+</html>
